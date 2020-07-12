@@ -1,3 +1,6 @@
 *.pyc
 ./FNN/.idea
 ./SKLEARN/.idea
+./DECISION_TREE/.idea
+./KNN/.idea     
+
