@@ -1,1 +1,3 @@
 *.pyc
+./FNN/.idea
+./SKLEARN/.idea
