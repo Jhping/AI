@@ -105,7 +105,7 @@ class Linear(Node):
     def backward(self):
         # 反向传播计算
         # initial a partial for each of the inbound_nodes.
-        self.gradients = {n: np.zeros_like(n.value) for n in self.inputs}
+        self.gradients = {n: np.zeros_like(n.value) for n in self.inputs}#zeros_like(a)获得一个和a相同shape的全 0 数组
 
         for n in self.outputs:
             # Get the partial of the cost w.r.t this node.
@@ -271,7 +271,7 @@ if __name__ == "__main__":
     # Normalize data
     X_ = (X_ - np.mean(X_, axis=0)) / np.std(X_, axis=0)
     n_features = X_.shape[1]  # 13个特征值
-    n_hidden = 10
+    n_hidden = 10# 一个隐藏层有10个节点
     W1_ = np.random.randn(n_features, n_hidden) #13x10
     b1_ = np.zeros(n_hidden)                    #10
     W2_ = np.random.randn(n_hidden, 1)          #10x1
@@ -309,7 +309,7 @@ if __name__ == "__main__":
 
     print("Total number of examples = {}".format(m))
 
-    # Step 4 总共迭代次数为 epochs x batches = 5000*31
+    # Step 4 
     for i in range(epochs):
         loss = 0
         for j in range(steps_per_epoch):
