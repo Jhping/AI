@@ -309,7 +309,7 @@ if __name__ == "__main__":
 
     print("Total number of examples = {}".format(m))
 
-    # Step 4 
+    # Step 4
     for i in range(epochs):
         loss = 0
         for j in range(steps_per_epoch):
