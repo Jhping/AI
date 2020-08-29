@@ -20,12 +20,12 @@ class Node:
 
         self.value = None
 
-        self.gradients = {}
+        self.gradients = {}#对输入的梯度
         # keys are the inputs to this node, and their
         # values are the partials of this node with
         # respect to that input.
         # \partial{node}{input_i}
-    def forward(self):
+    def forward(self):# 计算自己的value
             # 前向传播函数 继承该类的其他类会覆写该函数
             '''
             Forward propagation.
@@ -35,14 +35,14 @@ class Node:
 
             raise NotImplemented
 
-    def backward(self):
+    def backward(self):# 计算自己对输入的梯度
             # 反向传播函数，继承该类的其他类会覆写该函数
 
             raise NotImplemented
 
 
 class Input(Node):
-    # 输入节点，包括神经网络输入节点，权重节点，和偏差节点
+    # 输入节点，包括神经网络输入节点X，权重节点W，和偏差节点B，该类节点没有输入节点
     def __init__(self):
         '''
         An Input node has no inbound nodes.
@@ -71,9 +71,8 @@ class Input(Node):
         # 计算节点梯度
         self.gradients = {self: 0}  # initialization
         for n in self.outputs:
-            # 以下计算该节点的输出节点对该节点的梯度
             grad_cost = n.gradients[self]
-            self.gradients[self] = grad_cost * 1
+            self.gradients[self] = grad_cost * 1#该类节点没有输入节点故*1
 
         # input N --> N1, N2
         # \partial L / \partial N
@@ -91,7 +90,7 @@ class Add(Node):
 
 class Linear(Node):
     # 全连接网络层的计算
-    def __init__(self, nodes, weights, bias):
+    def __init__(self, nodes, weights, bias):#假设X = 1 x n，W = n x m, b = 1 x m 其中m为该层神经元的个数
         Node.__init__(self, [nodes, weights, bias])
 
     def forward(self):
@@ -100,10 +99,10 @@ class Linear(Node):
         weights = self.inputs[1].value
         bias = self.inputs[2].value
 
-        self.value = np.dot(inputs, weights) + bias
+        self.value = np.dot(inputs, weights) + bias#计算的是 Z 的值 1 x m
 
     def backward(self):
-        # 反向传播计算
+        # 反向传播计算此节点对输入的梯度
         # initial a partial for each of the inbound_nodes.
         self.gradients = {n: np.zeros_like(n.value) for n in self.inputs}#zeros_like(a)获得一个和a相同shape的全 0 数组
 
@@ -111,8 +110,8 @@ class Linear(Node):
             # Get the partial of the cost w.r.t this node.
             grad_cost = n.gradients[self]
             # 以下分别计算对inputs， weights, bias的梯度
-            self.gradients[self.inputs[0]] = np.dot(grad_cost, self.inputs[1].value.T)
-            self.gradients[self.inputs[1]] = np.dot(self.inputs[0].value.T, grad_cost)
+            self.gradients[self.inputs[0]] = np.dot(grad_cost, self.inputs[1].value.T)#(1xm)dot(mxn)=(1xn)
+            self.gradients[self.inputs[1]] = np.dot(self.inputs[0].value.T, grad_cost)#(nx1)dot(1xm)=(nxm)
             self.gradients[self.inputs[2]] = np.sum(grad_cost, axis=0, keepdims=False)
         # WX + B / W ==> X
         # WX + B / X ==> W
@@ -154,7 +153,7 @@ class MSE(Node):
 
     def forward(self):
         # 前向传播计算
-        y = self.inputs[0].value.reshape(-1, 1)
+        y = self.inputs[0].value.reshape(-1, 1)#第二维元素个数需为1，第一维多少元素按情况定
         a = self.inputs[1].value.reshape(-1, 1)
         assert (y.shape == a.shape)
 
@@ -177,7 +176,7 @@ def forward_and_backward(outputnode, graph):
         n.forward()
         ## each node execute forward, get self.value based on the topological sort result.
 
-    for n in graph[::-1]:
+    for n in graph[::-1]:#从后向前取
         n.backward()
 
     # return outputnode.value
@@ -259,9 +258,6 @@ if __name__ == "__main__":
     No need to change anything, but feel free to tweak
     to test your network, play around with the epochs, batch size, etc!
     """
-
-
-
     # from miniflow import *
     losses = []
     # Load data
@@ -293,7 +289,7 @@ if __name__ == "__main__":
         W1: W1_,#13x10
         b1: b1_,#10x1
         W2: W2_,#10x1
-        b2: b2_#1
+        b2: b2_#1x1
     }
 
     epochs = 5000
